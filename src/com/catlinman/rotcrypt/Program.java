@@ -25,12 +25,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.NumberFormat;
 
-public class Program implements ActionListener, FocusListener, WindowListener,
-		MouseListener {
+public class Program implements ActionListener, FocusListener, WindowListener, MouseListener {
 	private JFrame mainFrame;
 	private JFrame aboutFrame;
 	private JTextArea inputArea;
@@ -43,12 +43,32 @@ public class Program implements ActionListener, FocusListener, WindowListener,
 	private Rotator rotator;
 
 	public static void main(String[] args){
-		SwingUtilities.invokeLater(new Runnable(){
-			public void run(){
-				Program program = new Program();
-				program.init();
+		if(args.length > 0){
+			for(String arg : args){
+				System.out.println(arg);
 			}
-		});
+			
+			File inputfile = new File(args[0]);
+
+			try{
+				if(!inputfile.isDirectory())
+					inputfile =inputfile.getParentFile();
+				if(inputfile.exists()){
+					System.out.println("Found file");
+					
+				}
+			} catch(NullPointerException e){
+				System.out.println("The path supplied is not valid");
+			}
+
+		} else{
+			SwingUtilities.invokeLater(new Runnable(){
+				public void run(){
+					Program program = new Program();
+					program.init();
+				}
+			});	
+		}
 	}
 
 	public void init(){
