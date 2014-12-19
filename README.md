@@ -6,7 +6,7 @@ Rotcrypt is a simple utility program used to rotate a string's letter indices ba
 
 The program itself can be run in two separate modes. The one is the default graphical user interface while the other is the command line approach which allows for the passing of a file name and a rotation sequence. The output is a new file with the file's rotated contents. The syntax for the command line launch is so the following:
 
-    $ java rotcrypt.jar [Input file location] [Rotation integer or rotation array]
+    $ java -jar rotcrypt.jar [Input file location] [Rotation integer or rotation array]
 
 ## Licence ##
 

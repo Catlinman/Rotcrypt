@@ -25,7 +25,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.text.NumberFormat;
@@ -43,19 +47,70 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 	private Rotator rotator;
 
 	public static void main(String[] args){
-		if(args.length > 0){
-			for(String arg : args){
-				System.out.println(arg);
-			}
-			
+		if(args.length > 0){	
 			File inputfile = new File(args[0]);
-
+			long rotations = 13;
+			
 			try{
-				if(!inputfile.isDirectory())
-					inputfile =inputfile.getParentFile();
 				if(inputfile.exists()){
-					System.out.println("Found file");
+					if(args.length > 1){
+						try{
+							rotations = Long.parseLong(args[1]);
+							rotations %= 26;
+						} catch(NumberFormatException e){
+							e.printStackTrace();
+						}
+					} else{
+						System.out.println("Rotations not specified - using 13 as the default");
+					}
 					
+					File outputfile = inputfile;
+					String[] tokens = args[0].split("\\.(?=[^\\.]+$)");
+					
+					try{
+						outputfile = new File(tokens[0] + "_r." + tokens[1]);
+						outputfile.createNewFile();
+					} catch(IOException e){
+						e.printStackTrace();
+					}
+
+					String readString, writeString, nextString;
+					BufferedReader br = null;
+					BufferedWriter bw = null;
+					Rotator rotator = new Rotator();
+					rotator.setRot(rotations);
+
+					try{
+						br = new BufferedReader(new FileReader(inputfile));
+						bw = new BufferedWriter(new FileWriter(outputfile));
+
+						readString = br.readLine();
+
+						if(readString == null){
+							System.out.println("The supplied file does not contain any data");
+						} else{
+							for (boolean firstString = true, lastString = (readString == null); !lastString; firstString = false, readString = nextString) {
+								lastString = ((nextString = br.readLine()) == null);
+								
+				                if(!firstString){
+				                	bw.newLine();
+				                }
+				                
+								writeString = rotator.rotate(readString, false);
+								bw.write(writeString);
+								
+								System.out.println("Input: " +readString);
+								System.out.println("Output: " +writeString);
+				            }
+						}
+						
+			        } catch(IOException e){
+						e.printStackTrace();
+					}finally {
+			        	if(br != null) try{br.close();bw.close();} catch(IOException e){e.printStackTrace();}
+			        }
+				} else{
+					System.out.println("The supplied file is not valid");
 				}
 			} catch(NullPointerException e){
 				System.out.println("The path supplied is not valid");
@@ -229,13 +284,13 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 					rotField.setValue((long) rotField.getValue() % 26);
 					rotator.setRot((long) rotField.getValue());
 					outputArea.replaceRange(
-							rotator.rotate(inputArea.getText(), false), 0,
-							outputArea.getText().length());
+						rotator.rotate(inputArea.getText(), false), 0,
+						outputArea.getText().length());
 				} else{
 					rotator.rotArray = rotArrayField.getText();
 					outputArea.replaceRange(
-							rotator.rotate(inputArea.getText(), false), 0,
-							outputArea.getText().length());
+						rotator.rotate(inputArea.getText(), false), 0,
+						outputArea.getText().length());
 				}
 			}
 		}
@@ -246,13 +301,13 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 					rotField.setValue((long) rotField.getValue() % 26);
 					rotator.setRot((long) rotField.getValue());
 					inputArea.replaceRange(
-							rotator.rotate(outputArea.getText(), true), 0,
-							inputArea.getText().length());
+						rotator.rotate(outputArea.getText(), true), 0,
+						inputArea.getText().length());
 				} else{
 					rotator.rotArray = rotArrayField.getText();
 					inputArea.replaceRange(
-							rotator.rotate(outputArea.getText(), true), 0,
-							inputArea.getText().length());
+						rotator.rotate(outputArea.getText(), true), 0,
+						inputArea.getText().length());
 				}
 			}
 		}
@@ -335,8 +390,8 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 
 			try{
 				Desktop.getDesktop().browse(URI.create(url));
-			} catch(IOException e1){
-				e1.printStackTrace();
+			} catch(IOException e2){
+				e2.printStackTrace();
 			}
 		}
 	}
