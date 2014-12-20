@@ -1,124 +1,93 @@
 package com.catlinman.rotcrypt;
 
 public class Rotator {
-	String letters = "abcdefghijklmnopqrstuvwxyz";
-	String upperletters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	String lowercaseCharacters 	= "abcdefghijklmnopqrstuvwxyz";
+	String uppercaseCharacters 	= "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-	long rot = 13;
-	String rotArray = ("14,11,98");
-
-	boolean useArray = false;
-	boolean debug = false;
-
+	String rotation = "14,11,98";
+	
 	public String rotate(String s, boolean reverse){
-		String rotatedString = "";
+		String outputString = "";
 
-		int[] fixedRotArray = null;
-		long currentRot = rot;
-		int seedIndex = -1;
+		long currentRotation = 13;
+		int rotationIndex = -1;
 
-		if(!useArray){
-			rot = rot % 26;
-			currentRot = rot;
-		}
-
-		else if(useArray){
-			String[] rotItems = rotArray.split(",");
-
-			fixedRotArray = new int[rotItems.length];
-
-			for(int i = 0; i < rotItems.length; i++){
-				try{
-					fixedRotArray[i] = Integer.parseInt(rotItems[i]);
-				} catch(NumberFormatException e){}
-			}
-		}
-
+		long[] rotationSet = createRotationArray(rotation);
+		
 		for(int i = 0; i < s.length(); i++){
-			if(useArray){
-				try{
-					seedIndex++;
-					currentRot = fixedRotArray[seedIndex] % 26;
-				} catch(ArrayIndexOutOfBoundsException e){
-					seedIndex = 0;
-					currentRot = fixedRotArray[seedIndex] % 26;
-				}
+			try{
+				rotationIndex++;
+				currentRotation = rotationSet[rotationIndex] % lowercaseCharacters.length();
+			} catch(ArrayIndexOutOfBoundsException e){
+				rotationIndex = 0;
+				currentRotation = rotationSet[rotationIndex] % lowercaseCharacters.length();
 			}
 
-			if(reverse)
-				currentRot = -currentRot;
+			if(reverse) currentRotation = -currentRotation;
 
 			String currentLetter = Character.toString(s.charAt(i));
-
-			if(debug)
-				System.out.print(currentLetter + " --> ");
-
+			
 			if(currentLetter.matches(".*[abcdefghijklmnopqrstuvwxyz].*")){
-				int letterIndex = letters.indexOf(currentLetter);
-				long rotatedIndex = letterIndex + currentRot;
+				int letterIndex = lowercaseCharacters.indexOf(currentLetter);
+				long rotatedIndex = letterIndex + currentRotation;
 
-				if(rotatedIndex > letters.length() - 1){
-					rotatedIndex = letterIndex + currentRot - letters.length();
+				if(rotatedIndex > lowercaseCharacters.length() - 1){
+					rotatedIndex = letterIndex + currentRotation - lowercaseCharacters.length();
 				}
 
 				if(rotatedIndex < 0){
-					rotatedIndex = letterIndex + currentRot + letters.length();
+					rotatedIndex = letterIndex + currentRotation + lowercaseCharacters.length();
 				}
-
-				rotatedString = new StringBuilder()
-						.append(rotatedString)
-						.append(Character.toString(letters
-								.charAt((int) rotatedIndex))).toString();
-
-				if(debug)
-					System.out.print(Character.toString(letters
-							.charAt((int) rotatedIndex)) + "\n");
+				
+				outputString = new StringBuilder()
+						.append(outputString)
+						.append(Character.toString(lowercaseCharacters.charAt((int) rotatedIndex))).toString();
 			}
 
 			else if(currentLetter.matches(".*[ABCDEFGHIJKLMNOPQRSTUVWXYZ].*")){
-				int letterIndex = upperletters.indexOf(currentLetter);
-				long rotatedIndex = letterIndex + currentRot;
+				int letterIndex = uppercaseCharacters.indexOf(currentLetter);
+				long rotatedIndex = letterIndex + currentRotation;
 
-				if(rotatedIndex > letters.length() - 1){
-					rotatedIndex = letterIndex + currentRot - letters.length();
+				if(rotatedIndex > lowercaseCharacters.length() - 1){
+					rotatedIndex = letterIndex + currentRotation - lowercaseCharacters.length();
 				}
 
 				if(rotatedIndex < 0){
-					rotatedIndex = letterIndex + currentRot + letters.length();
+					rotatedIndex = letterIndex + currentRotation + lowercaseCharacters.length();
 				}
 
-				rotatedString = new StringBuilder()
-						.append(rotatedString)
-						.append(Character.toString(upperletters
-								.charAt((int) rotatedIndex))).toString();
-
-				if(debug)
-					System.out.print(Character.toString(upperletters
-							.charAt((int) rotatedIndex)) + "\n");
+				outputString = new StringBuilder()
+						.append(outputString)
+						.append(Character.toString(uppercaseCharacters.charAt((int) rotatedIndex))).toString();
 			}
 
 			else if(currentLetter.matches(".*[ ].*")){
-				rotatedString = new StringBuilder().append(rotatedString)
-						.append(" ").toString();
-				if(debug)
-					System.out.print("SPACE" + "\n");
+				outputString = new StringBuilder().append(outputString).append(" ").toString();
 			} else{
-				rotatedString = new StringBuilder().append(rotatedString)
-						.append(currentLetter).toString();
-				if(debug)
-					System.out.print(currentLetter + "\n");
+				outputString = new StringBuilder().append(outputString).append(currentLetter).toString();
 			}
 		}
-		if(debug)
-			System.out.print(rotatedString);
-		return rotatedString;
-	}
 
-	public void setRot(long l){
-		rot = l;
+		return outputString;
+	} 
+	
+	public long[] createRotationArray(String s){
+		String[] values = s.split(",");
+		long[] set = new long[values.length];
+		for(int i = 0; i < values.length; i++){
+			try{
+				set[i] = Long.parseLong(values[i]);
+			} catch(NumberFormatException e){}
+		}
+		
+		return set;
 	}
-
-	public long getRot(){
-		return rot;
+	
+	public void setRotation(String s){
+		rotation = s;
+	}
+	
+	public String getRotation(){
+		return rotation;
 	}
 }

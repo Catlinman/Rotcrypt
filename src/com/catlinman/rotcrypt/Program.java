@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.net.URI;
 import java.text.NumberFormat;
 
@@ -45,31 +46,27 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 	private JFormattedTextField rotField;
 	private JFormattedTextField rotArrayField;
 	private Rotator rotator;
-
+	private boolean arrayEnabled = false;
+	
 	public static void main(String[] args){
 		if(args.length > 0){	
-			File inputfile = new File(args[0]);
-			long rotations = 13;
+			File inputFile = new File(args[0]);
+			String inputRotation = "13";
 			
 			try{
-				if(inputfile.exists()){
+				if(inputFile.exists()){
 					if(args.length > 1){
-						try{
-							rotations = Long.parseLong(args[1]);
-							rotations %= 26;
-						} catch(NumberFormatException e){
-							e.printStackTrace();
-						}
+						inputRotation = args[1].replaceAll("[^0123456789,]", "");
 					} else{
 						System.out.println("Rotations not specified - using 13 as the default");
 					}
 					
-					File outputfile = inputfile;
+					File outputFile = inputFile;
 					String[] tokens = args[0].split("\\.(?=[^\\.]+$)");
 					
 					try{
-						outputfile = new File(tokens[0] + "_r." + tokens[1]);
-						outputfile.createNewFile();
+						outputFile = new File(tokens[0] + "_r." + tokens[1]);
+						outputFile.createNewFile();
 					} catch(IOException e){
 						e.printStackTrace();
 					}
@@ -78,11 +75,12 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 					BufferedReader br = null;
 					BufferedWriter bw = null;
 					Rotator rotator = new Rotator();
-					rotator.setRot(rotations);
-
+					
+					rotator.setRotation(inputRotation);
+					
 					try{
-						br = new BufferedReader(new FileReader(inputfile));
-						bw = new BufferedWriter(new FileWriter(outputfile));
+						br = new BufferedReader(new FileReader(inputFile));
+						bw = new BufferedWriter(new FileWriter(outputFile));
 
 						readString = br.readLine();
 
@@ -167,11 +165,11 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 		digitformat.setMaximumIntegerDigits(2);
 
 		rotField = new JFormattedTextField(digitformat);
-		rotField.setValue(new Long(rotator.getRot()));
+		rotField.setValue(13);
 		rotField.setColumns(2);
 
 		rotArrayField = new JFormattedTextField();
-		rotArrayField.setText(rotator.rotArray);
+		rotArrayField.setText(rotator.getRotation());
 		rotArrayField.setColumns(52);
 		rotArrayField.setEnabled(false);
 		rotArrayField.addFocusListener(this);
@@ -280,34 +278,26 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 	public void actionPerformed(ActionEvent e){
 		if(e.getActionCommand() == "encrypt"){
 			if(inputArea.getText().length() > 0){
-				if(!rotator.useArray){
-					rotField.setValue((long) rotField.getValue() % 26);
-					rotator.setRot((long) rotField.getValue());
-					outputArea.replaceRange(
-						rotator.rotate(inputArea.getText(), false), 0,
-						outputArea.getText().length());
+				if(!arrayEnabled){
+					rotField.setValue((int)rotField.getValue() % 26);
+					rotator.setRotation(rotField.getValue().toString());
+					outputArea.replaceRange(rotator.rotate(inputArea.getText(), false), 0, outputArea.getText().length());
 				} else{
-					rotator.rotArray = rotArrayField.getText();
-					outputArea.replaceRange(
-						rotator.rotate(inputArea.getText(), false), 0,
-						outputArea.getText().length());
+					rotator.setRotation(rotArrayField.getText());
+					outputArea.replaceRange(rotator.rotate(inputArea.getText(), false), 0, outputArea.getText().length());
 				}
 			}
 		}
 
 		else if(e.getActionCommand() == "decrypt"){
 			if(outputArea.getText().length() > 0){
-				if(!rotator.useArray){
-					rotField.setValue((long) rotField.getValue() % 26);
-					rotator.setRot((long) rotField.getValue());
-					inputArea.replaceRange(
-						rotator.rotate(outputArea.getText(), true), 0,
-						inputArea.getText().length());
+				if(!arrayEnabled){
+					rotField.setValue((int)rotField.getValue() % 26);
+					rotator.setRotation(rotField.getValue().toString());
+					inputArea.replaceRange(rotator.rotate(outputArea.getText(), true), 0, inputArea.getText().length());
 				} else{
-					rotator.rotArray = rotArrayField.getText();
-					inputArea.replaceRange(
-						rotator.rotate(outputArea.getText(), true), 0,
-						inputArea.getText().length());
+					rotator.setRotation(rotArrayField.getText());
+					inputArea.replaceRange(rotator.rotate(outputArea.getText(), true), 0, inputArea.getText().length());
 				}
 			}
 		}
@@ -327,14 +317,14 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 		}
 
 		else if(e.getActionCommand() == "checkbox"){
-			if(!rotator.useArray){
-				rotator.useArray = true;
+			if(!arrayEnabled){
+				arrayEnabled = true;
 				rotationLabel.setEnabled(false);
 				rotField.setEnabled(false);
 				rotArrayField.setEnabled(true);
 				rotationArrayLabel.setEnabled(true);
 			} else{
-				rotator.useArray = false;
+				arrayEnabled = false;
 				rotationLabel.setEnabled(true);
 				rotField.setEnabled(true);
 				rotationArrayLabel.setEnabled(false);
