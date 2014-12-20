@@ -56,7 +56,7 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 			try{
 				if(inputFile.exists()){
 					if(args.length > 1){
-						inputRotation = args[1].replaceAll("[^0123456789,]", "");
+						inputRotation = args[1].replaceAll("[^0123456789,-]", "");
 					} else{
 						System.out.println("Rotations not specified - using 13 as the default");
 					}
@@ -272,7 +272,7 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 	}
 
 	public String remNumbers(String s){
-		return(s.replaceAll("[^0123456789,]", ""));
+		return(s.replaceAll("[^0123456789,-]", ""));
 	}
 
 	public void actionPerformed(ActionEvent e){

@@ -1,69 +1,78 @@
 package com.catlinman.rotcrypt;
 
 public class Rotator {
-	String lowercaseCharacters 	= "abcdefghijklmnopqrstuvwxyz";
-	String uppercaseCharacters 	= "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	String numberCharacters 	= "1234567890";
-	String specialCharacters	= "!\"�$%&/()=?�`*+~@^'<>|,;.:-";
-
-	String rotation = "14,11,98";
+	private String lowercaseCharacters 	= "abcdefghijklmnopqrstuvwxyz";
+	private String uppercaseCharacters 	= "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private String numberCharacters 	= "1234567890";
+	private String specialCharacters	= "\\[\\]!\"§$%&#_/()=?´`*+~@^'<>|,;.:-{}\\\\";
+	private String localizedLowercaseCharacters	= "öäüæœøāåâáčçďēëéěêģīíîķļņňóôřšťūúůûýÿž";
+	private String localizedUppercaseCharacters = "ÖÄÜÆŒØĀÅÂÁČÇĎĒËÉĚÊĢĪÍÎĶĻŅŇÓÔŘŠŤŪÚŮÛÝŸŽ";
+	private String rotation = "14,11,98";
 	
+	private int rotationIndex = 13;
+	private long[] rotationSet = null;
+			
 	public String rotate(String s, boolean reverse){
 		String outputString = "";
-
-		int rotationIndex = -1;
-		long[] rotationSet = createRotationArray(rotation);
+		String mutatedString = "";
+		rotationSet = createRotationArray(rotation);
 		
+		// The matches and mutations here are sorted by their chance to appear in a given string
 		for(int i = 0; i < s.length(); i++){
-			String out;
-			if((out = applyRotation(s, outputString, lowercaseCharacters, rotationIndex, rotationSet, i, reverse)) != ""){
-				outputString = out;
-			} else if((out = applyRotation(s, outputString, uppercaseCharacters, rotationIndex, rotationSet, i, reverse)) != ""){
-				outputString = out;
-			} else if((out = applyRotation(s, outputString, numberCharacters, rotationIndex, rotationSet, i, reverse)) != ""){
-				outputString = out;
-			} else if((out = applyRotation(s, outputString, specialCharacters, rotationIndex, rotationSet, i, reverse)) != ""){
-				outputString = out;
-			} else if((out = applyRotation(s, outputString, " ", rotationIndex, rotationSet, i, reverse)) != ""){
-				outputString = out;
-			} else if((out = applyRotation(s, outputString, "*", rotationIndex, rotationSet, i, reverse)) != ""){
-				outputString = out;
+			if((mutatedString = applyRotation(s, outputString, i, lowercaseCharacters, reverse)) != ""){
+				outputString = mutatedString;
+			} else if((mutatedString = applyRotation(s, outputString, i, uppercaseCharacters, reverse)) != ""){
+				outputString = mutatedString;
+			} else if((mutatedString = applyRotation(s, outputString, i, numberCharacters, reverse)) != ""){
+				outputString = mutatedString;
+			} else if((mutatedString = applyRotation(s, outputString, i, specialCharacters, reverse)) != ""){
+				outputString = mutatedString;
+			} else if(s.charAt(i) == ' '){
+				outputString = outputString + ' ';
+			} else if((mutatedString = applyRotation(s, outputString, i, localizedLowercaseCharacters, reverse)) != ""){
+				outputString = mutatedString;
+			} else if((mutatedString = applyRotation(s, outputString, i, localizedUppercaseCharacters, reverse)) != ""){
+				outputString = mutatedString;
+			} else{
+				// System.out.println("Unknown character: " + Character.toString(s.charAt(i)));
+				outputString = outputString + Character.toString(s.charAt(i));
 			}
 		}
 
 		return outputString;
 	}
 	
-	private String applyRotation(String input, String output, String sequence, int setPosition, long[] set, int inputPosition, boolean reverse){
+	// Applies a rotation on a given string based on a matched input sequence. The set is an array containing the rotations. The set position is the rotation to be used.
+	private String applyRotation(String input, String output, int inputIndex, String matchsequence, boolean reverse){
 		long currentRotation = 13;
 		
 		try{
-			setPosition++;
-			currentRotation = set[setPosition] % sequence.length();
+			rotationIndex++;
+			currentRotation = rotationSet[rotationIndex] % matchsequence.length();
 		} catch(ArrayIndexOutOfBoundsException e){
-			setPosition = 0;
-			currentRotation = set[setPosition] % sequence.length();
+			rotationIndex = 0;
+			currentRotation = rotationSet[rotationIndex] % matchsequence.length();
 		}
 
 		if(reverse) currentRotation = -currentRotation;
 
-		String currentLetter = Character.toString(input.charAt(inputPosition));
+		String currentLetter = Character.toString(input.charAt(inputIndex));
 		
-		if(currentLetter.matches(".*["+sequence+"].*")){
-			int letterIndex = sequence.indexOf(currentLetter);
+		if(currentLetter.matches(".*["+matchsequence+"].*")){
+			int letterIndex = matchsequence.indexOf(currentLetter);
 			long rotatedIndex = letterIndex + currentRotation;
 
-			if(rotatedIndex > sequence.length() - 1){
-				rotatedIndex = letterIndex + currentRotation - sequence.length();
+			if(rotatedIndex > matchsequence.length() - 1){
+				rotatedIndex = letterIndex + currentRotation - matchsequence.length();
 			}
 
 			if(rotatedIndex < 0){
-				rotatedIndex = letterIndex + currentRotation + sequence.length();
+				rotatedIndex = letterIndex + currentRotation + matchsequence.length();
 			}
 			
 			output = new StringBuilder()
 					.append(output)
-					.append(Character.toString(sequence.charAt((int) rotatedIndex))).toString();
+					.append(Character.toString(matchsequence.charAt((int) rotatedIndex))).toString();
 			
 			return output;
 		} else{
