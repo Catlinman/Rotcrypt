@@ -165,7 +165,7 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 		digitformat.setMaximumIntegerDigits(2);
 
 		rotField = new JFormattedTextField(digitformat);
-		rotField.setValue(13);
+		rotField.setValue((int) 13);
 		rotField.setColumns(2);
 
 		rotArrayField = new JFormattedTextField();
@@ -279,8 +279,8 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 		if(e.getActionCommand() == "encrypt"){
 			if(inputArea.getText().length() > 0){
 				if(!arrayEnabled){
-					rotField.setValue((int)rotField.getValue() % 26);
-					rotator.setRotation(rotField.getValue().toString());
+					rotField.setValue(Integer.parseInt(rotField.getText()) % 26);
+					rotator.setRotation(rotField.getText());
 					outputArea.replaceRange(rotator.rotate(inputArea.getText(), false), 0, outputArea.getText().length());
 				} else{
 					rotator.setRotation(rotArrayField.getText());
@@ -292,8 +292,8 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 		else if(e.getActionCommand() == "decrypt"){
 			if(outputArea.getText().length() > 0){
 				if(!arrayEnabled){
-					rotField.setValue((int)rotField.getValue() % 26);
-					rotator.setRotation(rotField.getValue().toString());
+					rotField.setValue(Integer.parseInt(rotField.getText()) % 26);
+					rotator.setRotation(rotField.getText());
 					inputArea.replaceRange(rotator.rotate(outputArea.getText(), true), 0, inputArea.getText().length());
 				} else{
 					rotator.setRotation(rotArrayField.getText());
