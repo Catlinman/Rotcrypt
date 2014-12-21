@@ -45,48 +45,57 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 	private JLabel urlLabel;
 	private JFormattedTextField rotField;
 	private JFormattedTextField rotArrayField;
-	private Rotator rotator;
-	private boolean arrayEnabled = false;
+	
+	private Rotator rotator; // Variable storing the rotator used within the program.
+	private boolean arrayEnabled = false; // Stores the GUI state of the array check-box.
 	
 	public static void main(String[] args){
-		if(args.length > 0){	
-			File inputFile = new File(args[0]);
-			String inputRotation = "13";
+		// Command line section. This part is run when at least one argument is passed.
+		if(args.length > 0){
+			File inputFile = new File(args[0]); // Path to the file to be rotated.
+			String inputRotation = "13"; // Stores the rotation string which is later on supplied to the rotator.
 			
+			// Exception handle to check if the given filepath is actually valid.
 			try{
 				if(inputFile.exists()){
+					// Get the rotation or rotation array from the second argument. If none is present, default to 13.
 					if(args.length > 1){
 						inputRotation = args[1].replaceAll("[^0123456789,-]", "");
 					} else{
 						System.out.println("Rotations not specified - using 13 as the default");
 					}
 					
-					File outputFile = inputFile;
-					String[] tokens = args[0].split("\\.(?=[^\\.]+$)");
+					File outputFile = inputFile; // File storing the rotated contents of the input file.
+					String[] tokens = args[0].split("\\.(?=[^\\.]+$)"); // Regex to split the path into a root path and it's extension.
 					
 					try{
+						// Make the path of the output file and create the file. Catch any exceptions at the same time.
 						outputFile = new File(tokens[0] + "_r." + tokens[1]);
 						outputFile.createNewFile();
 					} catch(IOException e){
 						e.printStackTrace();
 					}
-
+					
+					// Prepare the variables needed for traversing and rotating the input file. Also initialize the rotator.
 					String readString, writeString, nextString;
 					BufferedReader br = null;
 					BufferedWriter bw = null;
 					Rotator rotator = new Rotator();
 					
-					rotator.setRotation(inputRotation);
+					rotator.setRotation(inputRotation); // Set the rotator rotation from the user's input argument.
 					
 					try{
+						// Create a reader for the input file and a writer for the output file.
 						br = new BufferedReader(new FileReader(inputFile));
 						bw = new BufferedWriter(new FileWriter(outputFile));
 
-						readString = br.readLine();
-
+						readString = br.readLine(); // Read the first line and store it.
+						
+						// Check if the file actually contains data.
 						if(readString == null){
 							System.out.println("The supplied file does not contain any data");
 						} else{
+							// Itterate over the file's lines, rotate them and write them to the output file.
 							for (boolean firstString = true, lastString = (readString == null); !lastString; firstString = false, readString = nextString) {
 								lastString = ((nextString = br.readLine()) == null);
 								
@@ -97,14 +106,16 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 								writeString = rotator.rotate(readString, false);
 								bw.write(writeString);
 								
-								System.out.println("Input: " +readString);
-								System.out.println("Output: " +writeString);
+								// System.out.println("Input: " +readString);
+								// System.out.println("Output: " +writeString);
 				            }
 						}
 						
 			        } catch(IOException e){
+			        	// Catch any exception that might appear while reading and writing.
 						e.printStackTrace();
 					}finally {
+						// Close all I/O streams. Catch exceptions here as well.
 			        	if(br != null) try{br.close();bw.close();} catch(IOException e){e.printStackTrace();}
 			        }
 				} else{
@@ -113,8 +124,9 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 			} catch(NullPointerException e){
 				System.out.println("The path supplied is not valid");
 			}
-
+		
 		} else{
+			// This part is run if there aren't any user arguments. It initilizes the GUI part of the program.  
 			SwingUtilities.invokeLater(new Runnable(){
 				public void run(){
 					Program program = new Program();
@@ -125,12 +137,14 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 	}
 
 	public void init(){
+		// Create a new rotator and setup of the two main JFrames.
 		rotator = new Rotator();
 		initMainFrame();
 		initAboutFrame();
 	}
 
 	public void initMainFrame(){
+		// JFrame creation and component assignment. This part is pretty straight forward.
 		mainFrame = new JFrame("Rotcrypt");
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setSize(new Dimension(640, 520));
@@ -217,6 +231,7 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 	}
 
 	public void initAboutFrame(){
+		// This part initializes the JFrame used for the about window.
 		aboutFrame = new JFrame("Rotcrypt - About");
 		aboutFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		aboutFrame.setSize(new Dimension(480, 440));
@@ -270,11 +285,13 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 		aboutFrame.add(panel);
 		aboutFrame.pack();
 	}
-
-	public String remNumbers(String s){
+	
+	// Removes characters irrelevant to the rotator.
+	public String filterNumbers(String s){
 		return(s.replaceAll("[^0123456789,-]", ""));
 	}
-
+	
+	// Callback function for the buttons within the JFrames.
 	public void actionPerformed(ActionEvent e){
 		if(e.getActionCommand() == "encrypt"){
 			if(inputArea.getText().length() > 0){
@@ -301,7 +318,8 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 				}
 			}
 		}
-
+		
+		// Makes the about window visible.
 		else if(e.getActionCommand() == "about"){
 			if(!aboutFrame.isVisible()){
 				aboutFrame.setLocationRelativeTo(null);
@@ -310,12 +328,14 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 				aboutFrame.requestFocus();
 			}
 		}
-
+		
+		// Closes the about window.
 		else if(e.getActionCommand() == "closeAbout"){
 			aboutFrame.dispose();
 			mainFrame.requestFocus();
 		}
-
+		
+		// Rotation array checkbox.
 		else if(e.getActionCommand() == "checkbox"){
 			if(!arrayEnabled){
 				arrayEnabled = true;
@@ -332,15 +352,14 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 			}
 		}
 	}
-
+	
+	// Filters the numbers within the rotation array field on focus and unfocus.
 	public void focusGained(FocusEvent e){
-		if(e.getSource() == rotArrayField)
-			rotArrayField.setText(remNumbers(rotArrayField.getText()));
+		if(e.getSource() == rotArrayField) rotArrayField.setText(filterNumbers(rotArrayField.getText()));
 	}
 
 	public void focusLost(FocusEvent e){
-		if(e.getSource() == rotArrayField)
-			rotArrayField.setText(remNumbers(rotArrayField.getText()));
+		if(e.getSource() == rotArrayField) rotArrayField.setText(filterNumbers(rotArrayField.getText()));
 	}
 
 	public void windowActivated(WindowEvent e){
@@ -350,7 +369,8 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 	public void windowClosed(WindowEvent e){
 
 	}
-
+	
+	// Closes the about frame's resources and focuses the main JFrame again.
 	public void windowClosing(WindowEvent e){
 		if(e.getSource() == aboutFrame){
 			aboutFrame.dispose();
@@ -373,7 +393,8 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 	public void windowOpened(WindowEvent e){
 
 	}
-
+	
+	// This event is mainly used for the URL label of the about frame.
 	public void mouseClicked(MouseEvent e){
 		if(e.getSource() == urlLabel){
 			String url = "https://twitter.com/catlinman_";
