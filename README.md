@@ -8,6 +8,6 @@ The program itself can be run in two separate modes. The one is the default grap
 
     $ java -jar rotcrypt.jar [Input file location] [Rotation integer or rotation array]
 
-## Licence ##
+## License ##
 
 This repository is released under the MIT license. For more information please refer to [LICENSE](https://github.com/Catlinman/Rotcrypt/blob/master/LICENSE)
