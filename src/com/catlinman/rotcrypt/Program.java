@@ -103,33 +103,33 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 							for (boolean firstString = true, lastString = (readString == null); !lastString; firstString = false, readString = nextString) {
 								lastString = ((nextString = br.readLine()) == null);
 								
-				                if(!firstString) {
-				                	bw.newLine();
-				                }
-				                
+								if(!firstString) {
+									bw.newLine();
+								}
+								
 								writeString = rotator.rotate(readString, false);
 								bw.write(writeString);
 								
 								// System.out.println("Input: " +readString);
 								// System.out.println("Output: " +writeString);
-				            }
+							}
 						}
 						
-			        } catch(IOException e) {
+					} catch(IOException e) {
 						e.printStackTrace(); // Catch any exception that might appear while reading and writing.
 
 					} finally {
 						// Close all I/O streams. Catch exceptions here as well.
-			        	if(br != null) {
-			        		try {
-			        			br.close();
-			        			bw.close();
+						if(br != null) {
+							try {
+								br.close();
+								bw.close();
 
-			        		} catch(IOException e) {
-			        			e.printStackTrace();
-			        		}
-			        	}
-			        }
+							} catch(IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
 
 				} else {
 					System.out.println("The supplied file is not valid");
@@ -146,7 +146,7 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 					Program program = new Program();
 					program.init();
 				}
-			});	
+			}); 
 		}
 	}
 
