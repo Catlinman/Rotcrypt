@@ -16,7 +16,7 @@ public class Rotator {
 	private long[] rotationSet = null; // Contains the set of rotations designated by the user.
 	
 	// This method is used to rotate a supplied string. The reverse boolean designates the direction of the rotation.
-	public String rotate(String s, boolean reverse){
+	public String rotate(String s, boolean reverse) {
 		String outputString = "";
 		String mutatedString = "";
 		
@@ -24,22 +24,29 @@ public class Rotator {
 		rotationSet = createRotationArray(rotation);
 		
 		// The matches and mutations here are sorted by their chance to appear in a given string
-		for(int i = 0; i < s.length(); i++){
-			if((mutatedString = applyRotation(s, outputString, i, lowercaseCharacters, reverse)) != ""){
+		for(int i = 0; i < s.length(); i++) {
+			if((mutatedString = applyRotation(s, outputString, i, lowercaseCharacters, reverse)) != "") {
 				outputString = mutatedString;
-			} else if((mutatedString = applyRotation(s, outputString, i, uppercaseCharacters, reverse)) != ""){
+
+			} else if((mutatedString = applyRotation(s, outputString, i, uppercaseCharacters, reverse)) != "") {
 				outputString = mutatedString;
-			} else if((mutatedString = applyRotation(s, outputString, i, numberCharacters, reverse)) != ""){
+
+			} else if((mutatedString = applyRotation(s, outputString, i, numberCharacters, reverse)) != "") {
 				outputString = mutatedString;
-			} else if((mutatedString = applyRotation(s, outputString, i, specialCharacters, reverse)) != ""){
+
+			} else if((mutatedString = applyRotation(s, outputString, i, specialCharacters, reverse)) != "") {
 				outputString = mutatedString;
-			} else if(s.charAt(i) == ' '){
+
+			} else if(s.charAt(i) == ' ') {
 				outputString = outputString + ' ';
-			} else if((mutatedString = applyRotation(s, outputString, i, localizedLowercaseCharacters, reverse)) != ""){
+
+			} else if((mutatedString = applyRotation(s, outputString, i, localizedLowercaseCharacters, reverse)) != "") {
 				outputString = mutatedString;
-			} else if((mutatedString = applyRotation(s, outputString, i, localizedUppercaseCharacters, reverse)) != ""){
+
+			} else if((mutatedString = applyRotation(s, outputString, i, localizedUppercaseCharacters, reverse)) != "") {
 				outputString = mutatedString;
-			} else{
+
+			} else {
 				// System.out.println("Unknown character: " + Character.toString(s.charAt(i)));
 				outputString = outputString + Character.toString(s.charAt(i));
 			}
@@ -49,15 +56,16 @@ public class Rotator {
 	}
 	
 	// Applies a rotation on a given string based on a matched input sequence. The set is an array containing the rotations.
-	private String applyRotation(String input, String output, int inputIndex, String matchsequence, boolean reverse){
+	private String applyRotation(String input, String output, int inputIndex, String matchsequence, boolean reverse) {
 		rotationIndex = -1; // We reset the rotation index so the output string always remains the same. 
 		long currentRotation = 13; // Stores the current rotation.
 		
 		// Increment the rotation index and set the current rotation to the correct value from the rotation set.
-		try{
+		try {
 			rotationIndex++;
 			currentRotation = rotationSet[rotationIndex] % matchsequence.length();
-		} catch(ArrayIndexOutOfBoundsException e){
+
+		} catch(ArrayIndexOutOfBoundsException e) {
 			rotationIndex = 0;
 			currentRotation = rotationSet[rotationIndex] % matchsequence.length();
 		}
@@ -69,7 +77,7 @@ public class Rotator {
 		String currentLetter = Character.toString(input.charAt(inputIndex));
 		
 		// Check if the letter matches the supplied match sequence argument.
-		if(currentLetter.matches(".*["+matchsequence+"].*")){
+		if(currentLetter.matches(".*["+matchsequence+"].*")) {
 			// Stores the position of the current letter relative to the match sequence.
 			int letterIndex = matchsequence.indexOf(currentLetter);
 			
@@ -77,11 +85,11 @@ public class Rotator {
 			long rotatedIndex = letterIndex + currentRotation;
 			
 			// Wrap the rotated index value so it is still in the bounds of the match sequence argument. 
-			if(rotatedIndex > matchsequence.length() - 1){
+			if(rotatedIndex > matchsequence.length() - 1) {
 				rotatedIndex = letterIndex + currentRotation - matchsequence.length();
 			}
 
-			if(rotatedIndex < 0){
+			if(rotatedIndex < 0) {
 				rotatedIndex = letterIndex + currentRotation + matchsequence.length();
 			}
 			
@@ -91,30 +99,34 @@ public class Rotator {
 					.append(Character.toString(matchsequence.charAt((int) rotatedIndex))).toString();
 			
 			return output;
-		} else{
+
+		} else {
 			return "";
 		}
 	}
 	
 	// Splits the rotation string into an array of long integers.
-	public long[] createRotationArray(String s){
+	public long[] createRotationArray(String s) {
 		String[] values = s.split(",");
 		long[] set = new long[values.length];
-		for(int i = 0; i < values.length; i++){
-			try{
+
+		for(int i = 0; i < values.length; i++) {
+
+			try {
 				set[i] = Long.parseLong(values[i]);
-			} catch(NumberFormatException e){}
+
+			} catch(NumberFormatException e) {}
 		}
 		
 		return set;
 	}
 	
 	// Getter and setter functions.
-	public void setRotation(String s){
+	public void setRotation(String s) {
 		rotation = s;
 	}
 	
-	public String getRotation(){
+	public String getRotation() {
 		return rotation;
 	}
 }

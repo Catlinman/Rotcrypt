@@ -49,30 +49,32 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 	private Rotator rotator; // Variable storing the rotator used within the program.
 	private boolean arrayEnabled = false; // Stores the GUI state of the array check-box.
 	
-	public static void main(String[] args){
+	public static void main(String[] args) {
 		// Command line section. This part is run when at least one argument is passed.
-		if(args.length > 0){
+		if(args.length > 0) {
 			File inputFile = new File(args[0]); // Path to the file to be rotated.
 			String inputRotation = "13"; // Stores the rotation string which is later on supplied to the rotator.
 			
-			// Exception handle to check if the given filepath is actually valid.
-			try{
-				if(inputFile.exists()){
+			try { // Exception handle to check if the given file path is actually valid.
+
+				if(inputFile.exists()) {
 					// Get the rotation or rotation array from the second argument. If none is present, default to 13.
-					if(args.length > 1){
+					if(args.length > 1) {
 						inputRotation = args[1].replaceAll("[^0123456789,-]", "");
-					} else{
+
+					} else {
 						System.out.println("Rotations not specified - using 13 as the default");
 					}
 					
 					File outputFile = inputFile; // File storing the rotated contents of the input file.
 					String[] tokens = args[0].split("\\.(?=[^\\.]+$)"); // Regex to split the path into a root path and it's extension.
 					
-					try{
+					try {
 						// Make the path of the output file and create the file. Catch any exceptions at the same time.
 						outputFile = new File(tokens[0] + "_r." + tokens[1]);
 						outputFile.createNewFile();
-					} catch(IOException e){
+
+					} catch(IOException e) {
 						e.printStackTrace();
 					}
 					
@@ -84,7 +86,7 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 					
 					rotator.setRotation(inputRotation); // Set the rotator rotation from the user's input argument.
 					
-					try{
+					try {
 						// Create a reader for the input file and a writer for the output file.
 						br = new BufferedReader(new FileReader(inputFile));
 						bw = new BufferedWriter(new FileWriter(outputFile));
@@ -92,14 +94,15 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 						readString = br.readLine(); // Read the first line and store it.
 						
 						// Check if the file actually contains data.
-						if(readString == null){
+						if(readString == null) {
 							System.out.println("The supplied file does not contain any data");
-						} else{
-							// Itterate over the file's lines, rotate them and write them to the output file.
+
+						} else {
+							// Iterate over the file's lines, rotate them and write them to the output file.
 							for (boolean firstString = true, lastString = (readString == null); !lastString; firstString = false, readString = nextString) {
 								lastString = ((nextString = br.readLine()) == null);
 								
-				                if(!firstString){
+				                if(!firstString) {
 				                	bw.newLine();
 				                }
 				                
@@ -111,24 +114,34 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 				            }
 						}
 						
-			        } catch(IOException e){
-			        	// Catch any exception that might appear while reading and writing.
-						e.printStackTrace();
-					}finally {
+			        } catch(IOException e) {
+						e.printStackTrace(); // Catch any exception that might appear while reading and writing.
+
+					} finally {
 						// Close all I/O streams. Catch exceptions here as well.
-			        	if(br != null) try{br.close();bw.close();} catch(IOException e){e.printStackTrace();}
+			        	if(br != null) {
+			        		try {
+			        			br.close();
+			        			bw.close();
+
+			        		} catch(IOException e) {
+			        			e.printStackTrace();
+			        		}
+			        	}
 			        }
-				} else{
+
+				} else {
 					System.out.println("The supplied file is not valid");
 				}
-			} catch(NullPointerException e){
+
+			} catch(NullPointerException e) {
 				System.out.println("The path supplied is not valid");
 			}
 		
-		} else{
-			// This part is run if there aren't any user arguments. It initilizes the GUI part of the program.  
-			SwingUtilities.invokeLater(new Runnable(){
-				public void run(){
+		} else {
+			// This part is run if there aren't any user arguments. It initializes the GUI part of the program.  
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
 					Program program = new Program();
 					program.init();
 				}
@@ -136,14 +149,14 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 		}
 	}
 
-	public void init(){
+	public void init() {
 		// Create a new rotator and setup of the two main JFrames.
 		rotator = new Rotator();
 		initMainFrame();
 		initAboutFrame();
 	}
 
-	public void initMainFrame(){
+	public void initMainFrame() {
 		// JFrame creation and component assignment. This part is pretty straight forward.
 		mainFrame = new JFrame("Rotcrypt");
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -208,6 +221,7 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 		helpButton.addActionListener(this);
 		helpButton.setActionCommand("about");
 
+		// Add all created elements to the main panel.
 		panel.add(inputLabel);
 		panel.add(inputScrollPane);
 		panel.add(outputLabel);
@@ -230,7 +244,7 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 		mainFrame.setVisible(true);
 	}
 
-	public void initAboutFrame(){
+	public void initAboutFrame() {
 		// This part initializes the JFrame used for the about window.
 		aboutFrame = new JFrame("Rotcrypt - About");
 		aboutFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -287,32 +301,34 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 	}
 	
 	// Removes characters irrelevant to the rotator.
-	public String filterNumbers(String s){
+	public String filterNumbers(String s) {
 		return(s.replaceAll("[^0123456789,-]", ""));
 	}
 	
 	// Callback function for the buttons within the JFrames.
-	public void actionPerformed(ActionEvent e){
-		if(e.getActionCommand() == "encrypt"){
-			if(inputArea.getText().length() > 0){
-				if(!arrayEnabled){
+	public void actionPerformed(ActionEvent e) {
+		if(e.getActionCommand() == "encrypt") {
+			if(inputArea.getText().length() > 0) {
+				if(!arrayEnabled) {
 					rotField.setValue(Integer.parseInt(rotField.getText()) % 26);
 					rotator.setRotation(rotField.getText());
 					outputArea.replaceRange(rotator.rotate(inputArea.getText(), false), 0, outputArea.getText().length());
-				} else{
+
+				} else {
 					rotator.setRotation(rotArrayField.getText());
 					outputArea.replaceRange(rotator.rotate(inputArea.getText(), false), 0, outputArea.getText().length());
 				}
 			}
 		}
 
-		else if(e.getActionCommand() == "decrypt"){
-			if(outputArea.getText().length() > 0){
-				if(!arrayEnabled){
+		else if(e.getActionCommand() == "decrypt") {
+			if(outputArea.getText().length() > 0) {
+				if(!arrayEnabled) {
 					rotField.setValue(Integer.parseInt(rotField.getText()) % 26);
 					rotator.setRotation(rotField.getText());
 					inputArea.replaceRange(rotator.rotate(outputArea.getText(), true), 0, inputArea.getText().length());
-				} else{
+
+				} else {
 					rotator.setRotation(rotArrayField.getText());
 					inputArea.replaceRange(rotator.rotate(outputArea.getText(), true), 0, inputArea.getText().length());
 				}
@@ -320,30 +336,32 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 		}
 		
 		// Makes the about window visible.
-		else if(e.getActionCommand() == "about"){
-			if(!aboutFrame.isVisible()){
+		else if(e.getActionCommand() == "about") {
+			if(!aboutFrame.isVisible()) {
 				aboutFrame.setLocationRelativeTo(null);
 				aboutFrame.setVisible(true);
-			} else{
+
+			} else {
 				aboutFrame.requestFocus();
 			}
 		}
 		
 		// Closes the about window.
-		else if(e.getActionCommand() == "closeAbout"){
+		else if(e.getActionCommand() == "closeAbout") {
 			aboutFrame.dispose();
 			mainFrame.requestFocus();
 		}
 		
 		// Rotation array checkbox.
-		else if(e.getActionCommand() == "checkbox"){
-			if(!arrayEnabled){
+		else if(e.getActionCommand() == "checkbox") {
+			if(!arrayEnabled) {
 				arrayEnabled = true;
 				rotationLabel.setEnabled(false);
 				rotField.setEnabled(false);
 				rotArrayField.setEnabled(true);
 				rotationArrayLabel.setEnabled(true);
-			} else{
+
+			} else {
 				arrayEnabled = false;
 				rotationLabel.setEnabled(true);
 				rotField.setEnabled(true);
@@ -354,72 +372,45 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 	}
 	
 	// Filters the numbers within the rotation array field on focus and unfocus.
-	public void focusGained(FocusEvent e){
+	public void focusGained(FocusEvent e) {
 		if(e.getSource() == rotArrayField) rotArrayField.setText(filterNumbers(rotArrayField.getText()));
 	}
 
-	public void focusLost(FocusEvent e){
+	public void focusLost(FocusEvent e) {
 		if(e.getSource() == rotArrayField) rotArrayField.setText(filterNumbers(rotArrayField.getText()));
-	}
-
-	public void windowActivated(WindowEvent e){
-
-	}
-
-	public void windowClosed(WindowEvent e){
-
 	}
 	
 	// Closes the about frame's resources and focuses the main JFrame again.
 	public void windowClosing(WindowEvent e){
-		if(e.getSource() == aboutFrame){
+		if(e.getSource() == aboutFrame) {
 			aboutFrame.dispose();
 			mainFrame.requestFocus();
 		}
 	}
 
-	public void windowDeactivated(WindowEvent e){
-
-	}
-
-	public void windowDeiconified(WindowEvent e){
-
-	}
-
-	public void windowIconified(WindowEvent e){
-
-	}
-
-	public void windowOpened(WindowEvent e){
-
-	}
+	public void windowActivated(WindowEvent e) {}
+	public void windowClosed(WindowEvent e) {}
+	public void windowDeactivated(WindowEvent e) {}
+	public void windowDeiconified(WindowEvent e) {}
+	public void windowIconified(WindowEvent e) {}
+	public void windowOpened(WindowEvent e) {}
 	
 	// This event is mainly used for the URL label of the about frame.
-	public void mouseClicked(MouseEvent e){
-		if(e.getSource() == urlLabel){
+	public void mouseClicked(MouseEvent e) {
+		if(e.getSource() == urlLabel) {
 			String url = "https://twitter.com/catlinman_";
 
-			try{
+			try {
 				Desktop.getDesktop().browse(URI.create(url));
-			} catch(IOException e2){
+
+			} catch(IOException e2) {
 				e2.printStackTrace();
 			}
 		}
 	}
 
-	public void mouseEntered(MouseEvent e){
-
-	}
-
-	public void mouseExited(MouseEvent e){
-
-	}
-
-	public void mousePressed(MouseEvent e){
-
-	}
-
-	public void mouseReleased(MouseEvent e){
-
-	}
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+	public void mousePressed(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {}
 }
