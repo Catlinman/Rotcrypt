@@ -1,3 +1,4 @@
+
 package com.catlinman.rotcrypt;
 
 import java.awt.Color;

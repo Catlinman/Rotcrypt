@@ -1,3 +1,4 @@
+
 package com.catlinman.rotcrypt;
 
 public class Rotator {
