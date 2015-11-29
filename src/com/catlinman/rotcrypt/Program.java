@@ -161,8 +161,8 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 		// JFrame creation and component assignment. This part is pretty straight forward.
 		mainFrame = new JFrame("Rotcrypt");
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setSize(new Dimension(640, 520));
-		mainFrame.setPreferredSize(new Dimension(640, 520));
+		mainFrame.setSize(new Dimension(640, 550));
+		mainFrame.setPreferredSize(new Dimension(640, 550));
 		mainFrame.setResizable(false);
 		mainFrame.setLocationRelativeTo(null);
 

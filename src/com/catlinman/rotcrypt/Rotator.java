@@ -7,11 +7,11 @@ public class Rotator {
 	private String uppercaseCharacters 	= "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	private String numberCharacters 	= "1234567890";
 	private String specialCharacters	= "\\[\\]!\"§$%&#_/()=?´`*+~@^'<>|,;.:-{}\\\\";
-	private String localizedLowercaseCharacters	= "öäüæœøāåâáčçďēëéěêģīíîķļņňóôřšťūúůûýÿž";
+	private String localizedLowercaseCharacters = "öäüæœøāåâáčçďēëéěêģīíîķļņňóôřšťūúůûýÿž";
 	private String localizedUppercaseCharacters = "ÖÄÜÆŒØĀÅÂÁČÇĎĒËÉĚÊĢĪÍÎĶĻŅŇÓÔŘŠŤŪÚŮÛÝŸŽ";
 	
 	// A string containing the the information gathered from either the text boxes or the console rotation argument.
-	private String rotation = "14,11,98";
+	private String rotation = "12,2,96";
 	
 	private int rotationIndex = -1; // The rotation index marks the currently used rotation in the rotation set.
 	private long[] rotationSet = null; // Contains the set of rotations designated by the user.
@@ -23,6 +23,7 @@ public class Rotator {
 		
 		// Convert the rotation string to an array of long integers.
 		rotationSet = createRotationArray(rotation);
+		rotationIndex = -1; // We reset the rotation index so the output string always remains the same. 
 		
 		// The matches and mutations here are sorted by their chance to appear in a given string
 		for(int i = 0; i < s.length(); i++) {
@@ -58,7 +59,6 @@ public class Rotator {
 	
 	// Applies a rotation on a given string based on a matched input sequence. The set is an array containing the rotations.
 	private String applyRotation(String input, String output, int inputIndex, String matchsequence, boolean reverse) {
-		rotationIndex = -1; // We reset the rotation index so the output string always remains the same. 
 		long currentRotation = 13; // Stores the current rotation.
 		
 		// Increment the rotation index and set the current rotation to the correct value from the rotation set.
@@ -98,6 +98,8 @@ public class Rotator {
 			output = new StringBuilder()
 					.append(output)
 					.append(Character.toString(matchsequence.charAt((int) rotatedIndex))).toString();
+			
+			System.out.println(currentRotation + " -- " + currentLetter + " -> " + output);
 			
 			return output;
 
