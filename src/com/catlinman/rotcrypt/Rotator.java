@@ -3,12 +3,12 @@ package com.catlinman.rotcrypt;
 
 public class Rotator {
 	// Match sequences
-	private String lowercaseCharacters 	= "abcdefghijklmnopqrstuvwxyz";
-	private String uppercaseCharacters 	= "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	private String numberCharacters 	= "1234567890";
-	private String specialCharacters	= "\\[\\]!\"§$%&#_/()=?´`*+~@^'<>|,;.:-{}\\\\";
-	private String localizedLowercaseCharacters = "öäüæœøāåâáčçďēëéěêģīíîķļņňóôřšťūúůûýÿž";
-	private String localizedUppercaseCharacters = "ÖÄÜÆŒØĀÅÂÁČÇĎĒËÉĚÊĢĪÍÎĶĻŅŇÓÔŘŠŤŪÚŮÛÝŸŽ";
+	private final String lowercaseCharacters = "abcdefghijklmnopqrstuvwxyz";
+	private final String uppercaseCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private final String numberCharacters = "1234567890";
+	private final String specialCharacters = "\\[\\]!\"§$%&#_/()=?´`*+~@^'<>|,;.:-{}\\\\";
+	private final String localizedLowercaseCharacters = "öäüæœøāåâáčçďēëéěêģīíîķļņňóôřšťūúůûýÿž";
+	private final String localizedUppercaseCharacters = "ÖÄÜÆŒØĀÅÂÁČÇĎĒËÉĚÊĢĪÍÎĶĻŅŇÓÔŘŠŤŪÚŮÛÝŸŽ";
 	
 	// A string containing the the information gathered from either the text boxes or the console rotation argument.
 	private String rotation = "12,2,96";
@@ -22,8 +22,8 @@ public class Rotator {
 		String mutatedString = "";
 		
 		// Convert the rotation string to an array of long integers.
-		rotationSet = createRotationArray(rotation);
-		rotationIndex = -1; // We reset the rotation index so the output string always remains the same. 
+		this.rotationSet = createRotationArray(rotation);
+		this.rotationIndex = -1; // We reset the rotation index so the output string always remains the same. 
 		
 		// The matches and mutations here are sorted by their chance to appear in a given string
 		for(int i = 0; i < s.length(); i++) {
@@ -63,12 +63,12 @@ public class Rotator {
 		
 		// Increment the rotation index and set the current rotation to the correct value from the rotation set.
 		try {
-			rotationIndex++;
-			currentRotation = rotationSet[rotationIndex] % matchsequence.length();
+			this.rotationIndex++;
+			currentRotation = this.rotationSet[this.rotationIndex] % matchsequence.length();
 
 		} catch(ArrayIndexOutOfBoundsException e) {
-			rotationIndex = 0;
-			currentRotation = rotationSet[rotationIndex] % matchsequence.length();
+			this.rotationIndex = 0;
+			currentRotation = this.rotationSet[this.rotationIndex] % matchsequence.length();
 		}
 		
 		// Reverse the rotation if specified.
@@ -126,10 +126,10 @@ public class Rotator {
 	
 	// Getter and setter functions.
 	public void setRotation(String s) {
-		rotation = s;
+		this.rotation = s;
 	}
 	
 	public String getRotation() {
-		return rotation;
+		return this.rotation;
 	}
 }

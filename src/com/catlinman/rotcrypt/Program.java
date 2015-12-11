@@ -280,7 +280,7 @@ public class Program implements ActionListener, FocusListener, WindowListener, M
 		JLabel creditLabel = new JLabel("Rotcrypt was created by");
 		creditLabel.setFont(new Font("Arial Bold", Font.PLAIN, 16));
 
-		urlLabel = new JLabel("@Catlinman_");
+		urlLabel = new JLabel("@catlinman_");
 		urlLabel.setForeground(new Color(75, 75, 255));
 		urlLabel.addMouseListener(this);
 		urlLabel.setFont(new Font("Arial Bold", Font.PLAIN, 16));
