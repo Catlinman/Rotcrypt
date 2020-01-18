@@ -1,0 +1,3 @@
+Manifest-version: 1.0
+Created-By: Catlinman
+Main-Class: com.catlinman.rotcrypt.Program
